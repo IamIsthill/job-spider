@@ -1,18 +1,18 @@
 import asyncio
-from typing import Any, TypedDict
+from typing import TypedDict
 
-from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 from playwright_stealth import Stealth
 
 import constants
 from parse_html import parseHtml, findContent
+from gsheet import getSpreadSheet
 
 async def visit_url(url: str) -> str:
     async with Stealth().use_async(async_playwright()) as p:
         browser = await p.chromium.launch()
         page = await browser.new_page()
-        await page.goto(url)
+        await page.goto(url, timeout=60000)
         return await page.content()
 
 class JobInfo(TypedDict):
@@ -40,14 +40,15 @@ async def get_job_links(base: str, starting_url:str,  selector: dict) -> list[st
     return links
 
 async def get_job_detail(link:str) -> JobInfo:    
-    job: JobInfo = {'job_link': link}
+    job: JobInfo = {}
         
     doc = parseHtml(await visit_url(link))
 
     for key, value in constants.JOB_INFO.items():
         info = findContent(doc, {constants.SELECTOR:value})
         job[key] = info
-    
+
+    job['job_link'] = link
     return job
 
 async def main():
@@ -62,5 +63,18 @@ async def main():
     for link in links:
         job = await get_job_detail(link)
         jobs.append(job)
+
+    sheet = getSpreadSheet()
+
+    # Add header
+    header = list(constants.JOB_INFO.keys())
+    header.append('job_link')
+    sheet.update("A1", [header])
+
+    # Save jobs
+    for job in jobs:
+        row = list(job.values())
+        sheet.append_row(row)
+
 
 asyncio.run(main())
