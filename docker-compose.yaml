@@ -1,0 +1,10 @@
+services:
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+    working_dir: /app
+    restart: always
+    command: python src/scraper.py

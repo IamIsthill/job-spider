@@ -1,0 +1,16 @@
+BASE_URL= <<the base url of the website>>
+
+STARTING_URL= <<starting url where you will  fetch all job listings>>
+
+JOB_INFO = {
+    "title": "",
+    "company": "",
+    "location": "",
+    "work_type": "",
+    "salary": "",
+    "description": ""
+}
+
+JOB_LINKS = <<attribute used to locate all job links on the listing page>>
+
+SELECTOR= <<base html attribute>>
