@@ -3,3 +3,5 @@ beautifulsoup4
 watchgod
 pytest-playwright
 playwright_stealth
+gspread
+google-auth

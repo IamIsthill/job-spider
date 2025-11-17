@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./src:/app/src
+      - ./credentials.json:/app/credentials.json
     working_dir: /app
     restart: always
     command: python src/scraper.py
+    environment:
+      - GOOGLE_CREDS=/app/credentials.json
